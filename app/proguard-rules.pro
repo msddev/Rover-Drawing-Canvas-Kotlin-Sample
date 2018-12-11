@@ -19,3 +19,61 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+-keep class android.arch.lifecycle.**
+
+# OkHttp
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
+-dontwarn okhttp3.**
+
+-dontnote retrofit2.Platform
+-dontwarn retrofit2.Platform$Java8
+-keepattributes Signature
+-keepattributes Exceptions
+-dontwarn okio.**
+-dontwarn javax.annotation.**
+
+-keepattributes Signature
+-keepattributes *Annotation*
+
+##---------------Begin: proguard configuration for Gson  ----------
+# Gson uses generic type information stored in a class file when working with fields. Proguard
+# removes such information by default, so configure it to keep all of it.
+-keepattributes Signature
+
+# For using GSON @Expose annotation
+-keepattributes *Annotation*
+
+# Gson specific classes
+-dontwarn sun.misc.**
+-keep class com.google.gson.stream.** { *; }
+
+# Prevent proguard from stripping interface information from TypeAdapterFactory,
+# JsonSerializer, JsonDeserializer instances (so they can be used in @JsonAdapter)
+-keep class * implements com.google.gson.TypeAdapterFactory
+-keep class * implements com.google.gson.JsonSerializer
+-keep class * implements com.google.gson.JsonDeserializer
+
+# Retrofit 2.X
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
+-keepattributes Signature
+-keepattributes Exceptions
+
+-keepclasseswithmembers class * {
+    @retrofit2.http.* <methods>;
+}
+
+# Rxjava-promises
+-keep class com.darylteo.rx.** { *; }
+-dontwarn com.darylteo.rx.**
+
+-dontwarn retrofit2.converter.gson.**
+
+-keepclassmembers class * extends java.lang.Enum {
+    <fields>;
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
