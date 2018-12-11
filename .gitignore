@@ -97,3 +97,4 @@ crashlytics.properties
 crashlytics-build.properties
 app/src/androidTest/
 app/src/test/
+app/libs/

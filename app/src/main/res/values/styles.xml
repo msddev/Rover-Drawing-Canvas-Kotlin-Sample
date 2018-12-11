@@ -8,4 +8,21 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="MyTextStyleSecondaryMicro" parent="android:Widget.TextView">
+        <item name="android:textColor">@color/primary_text_white</item>
+        <item name="android:textSize">@dimen/text_size_Small</item>
+        <item name="android:lineSpacingExtra">5dp</item>
+        <item name="android:textColorHint">@color/secondary_text_white</item>
+    </style>
+
+    <style name="MyTextStyleSecondaryMicroClickable" parent="MyTextStyleSecondaryMicro">
+        <item name="android:textColor">@color/primary_text_white</item>
+        <item name="android:textSize">@dimen/text_size_Small</item>
+        <item name="android:lineSpacingExtra">5dp</item>
+        <item name="android:textColorHint">@color/secondary_text_white</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+    </style>
+
 </resources>

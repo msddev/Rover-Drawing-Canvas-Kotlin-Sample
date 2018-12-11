@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">RoverApp</string>
+    <string name="app_name">Rover App</string>
+    <string name="get_commands">Get Commands</string>
 </resources>

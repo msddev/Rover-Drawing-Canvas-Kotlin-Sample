@@ -1,6 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorPrimary">@color/primaryColorGreen</color>
+    <color name="colorPrimaryDark">@color/primaryDarkColorGreen</color>
+    <color name="colorAccent">@color/secondaryColorGray</color>
+
+    <color name="primary_text">#3B3B3B</color>
+    <color name="secondary_text">#606060</color>
+    <color name="primary_text_white">#F5F5F5</color>
+    <color name="secondary_text_white">#d1d1d1</color>
+
+    <!--  GREEN Theme -->
+    <color name="primaryColorGreen">#4CAF50</color>
+    <color name="primaryLightColorGreen">#C8E6C9</color>
+    <color name="primaryDarkColorGreen">#388E3C</color>
+    <color name="secondaryColorGreen">#00BCD4</color>
+    <color name="secondaryLightColorGreen">#6cd1de</color>
+    <color name="secondaryDarkColorGreen">#0197ab</color>
+    <color name="primaryTextColorGreen">#ffffff</color>
+    <color name="secondaryTextColorGreen">#000000</color>
+
+    <!-- GRAY Theme -->
+    <color name="primaryColorGray">#9E9E9E</color>
+    <color name="primaryLightColorGray">#F5F5F5</color>
+    <color name="primaryDarkColorGray">#616161</color>
+    <color name="secondaryColorGray">#536DFE</color>
+    <color name="secondaryLightColorGray">#94a5ff</color>
+    <color name="secondaryDarkColorGray">#2c44c9</color>
+    <color name="primaryTextColorGray">#ffffff</color>
+    <color name="secondaryTextColorGray">#000000</color>
+
+    <color name="color_success">#5cb85c</color>
+    <color name="color_info">#337ab7</color>
+    <color name="color_warning">#f0ad4e</color>
+    <color name="color_error">#d9534f</color>
+    <color name="color_default">#D4d6d7</color>
 </resources>
