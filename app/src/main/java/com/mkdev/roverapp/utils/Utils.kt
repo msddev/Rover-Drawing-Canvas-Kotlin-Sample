@@ -45,12 +45,12 @@ fun showToast(context: Context, message: String) {
     Toast.makeText(context, message, Toast.LENGTH_LONG).show()
 }
 
-fun vibrate(context: Context) {
+fun vibrate(context: Context, milliseconds: Long = 500) {
     val vib = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-        vib.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
+        vib.vibrate(VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE))
     else
-        vib.vibrate(500)
+        vib.vibrate(milliseconds)
 }
 
 private var lastClick = 0L

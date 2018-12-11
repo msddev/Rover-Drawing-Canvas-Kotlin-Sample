@@ -65,7 +65,7 @@ class CustomToast {
             toast.duration = Toast.LENGTH_LONG
 
             // Position you toast here toast position is 50 dp from bottom you can give any integral value
-            toast.setGravity(Gravity.BOTTOM, 0, dpToPixel(context, 40))
+            toast.setGravity(Gravity.BOTTOM, 0, dpToPixel(context, 100))
             toast.show()
         }
 

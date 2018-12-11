@@ -1,5 +1,6 @@
 package com.mkdev.roverapp.ui.activities
 
+import android.graphics.Point
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
@@ -30,6 +31,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v) {
             btnGetCommand -> {
+                roverCustomView.stopProcess()
+                roverCustomView.reset()
                 getRoverCommands()
             }
         }
@@ -41,11 +44,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             .iomain()
             .doOnSubscribe { loadingDialog.show() }
             .doAfterTerminate { loadingDialog.hide() }
-            .subscribe({
-                it?.let {
-                    if (linWelcome.visibility == View.VISIBLE)
-                        linWelcome.visibility = View.GONE
+            .subscribe({ rover ->
+                if (linWelcome.visibility == View.VISIBLE) {
+                    linWelcome.visibility = View.GONE
+                    roverCustomView.visibility = View.VISIBLE
+                }
 
+                rover?.let {
+                    roverCustomView.reset()
+                    roverCustomView.updateLayout(Point(it.startPoint.X, it.startPoint.Y), it.weirs)
+                    roverCustomView.processCommand(it.command)
                 } ?: run {
                     CustomToast.makeText(
                         this@MainActivity,
@@ -53,6 +61,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                         CustomToast.WARNING
                     )
                 }
+
             }, {
                 Timber.d(it)
                 CustomToast.makeText(this@MainActivity, getString(R.string.error), CustomToast.ERROR)

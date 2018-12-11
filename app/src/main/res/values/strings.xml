@@ -9,4 +9,10 @@
     <string name="welcome_to_my_mars">Welcome to my Mars</string>
     <string name="click_the_button_to_get_directions_from_the_ground">Click \'Get Commands \' button \nto get Commands from the earth</string>
 
+    <string name="accept">Ok</string>
+    <string name="cancel">Cancel</string>
+    <string name="alert">Alert</string>
+    <string name="weirs_alert">The rover struck the weirs!\nContinued path is impossible</string>
+    <string name="wall_alert">The rover struck the wall!\nContinued path is impossible</string>
+
 </resources>
