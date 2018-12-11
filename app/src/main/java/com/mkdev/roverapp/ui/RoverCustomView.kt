@@ -28,14 +28,11 @@ class RoverCustomView : View {
     private var arrowDown: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_arrow_down)
 
     private var cellWidth = 0f
-    private val cellPadding = dpToPx(4).toFloat()
+    private val cellPadding = dpToPx(5).toFloat()
 
     private lateinit var roverRect: RectF
     private var direction = Direction.UP
-    private val viewRect: RectF = RectF()
-    private var isBoulder = false
-    private var boulderPosition: Point? = null
-    private var partialCommand: String? = null
+    private var isBlocked = false
     private var cancelMovement = false
     private var roverThread: Thread? = null
     private var blockedCells = Array(20) { BooleanArray(10) }
@@ -55,9 +52,9 @@ class RoverCustomView : View {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
         if (measuredWidth > 0 && measuredHeight > 0) {
-            cellWidth = min((measuredWidth - 11 * cellPadding) / 9, (measuredHeight - 11 * cellPadding) / 19)
-            setMeasuredDimension(measuredWidth, measuredHeight)
-            viewRect.set(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat())
+
+            cellWidth = min((measuredWidth - (11 * cellPadding)) / 9, (measuredHeight - (21 * cellPadding)) / 20)
+            setMeasuredDimension((cellWidth * 10).toInt(), (cellWidth * 20).toInt())
             calculateRoverRect()
         }
     }
@@ -80,28 +77,12 @@ class RoverCustomView : View {
         }
     }
 
-    fun reset() {
+    private fun reset() {
         direction = Direction.UP
         blockedCells = Array(20) { BooleanArray(10) }
         roverPosition = Point(0, 0)
         calculateRoverRect()
         invalidate()
-    }
-
-    fun updateLayout(startPoint: Point, blocks: List<WeirsItem>) {
-        roverPosition = Point(startPoint)
-        blocks.forEach {
-            blockedCells[it.Y][it.X] = true
-        }
-        calculateRoverRect()
-        invalidate()
-    }
-
-    private fun getRoverBitmap() = when (direction) {
-        Direction.UP -> arrowUp
-        Direction.RIGHT -> arrowRight
-        Direction.LEFT -> arrowLeft
-        Direction.DOWN -> arrowDown
     }
 
     private fun calculateRoverRect() {
@@ -113,20 +94,24 @@ class RoverCustomView : View {
         )
     }
 
-    fun processCommand(commands: String) {
-        partialCommand = null
+    fun runCommand(startPoint: Point, blocks: List<WeirsItem>, commands: String) {
+        blocks.forEach {
+            blockedCells[it.Y][it.X] = true
+        }
+        roverPosition = Point(startPoint)
+        calculateRoverRect()
+        invalidate()
 
         roverThread = thread {
             try {
-                commands.forEachIndexed { i, c ->
+                commands.forEachIndexed { index, item ->
                     if (cancelMovement) {
                         cancelMovement = false
-                        partialCommand = commands.substring(i - 1)
                         return@thread
                     }
 
-                    when (c) {
-                        M_DIRECTION -> handler.post { moveOneCell() }
+                    when (item) {
+                        M_DIRECTION -> handler.post { moveRover() }
                         R_DIRECTION -> handler.post { turnRight() }
                         L_DIRECTION -> handler.post { turnLeft() }
                     }
@@ -139,9 +124,32 @@ class RoverCustomView : View {
         }
     }
 
-    fun stopProcess(){
+    fun stopProcess() {
         roverThread?.interrupt()
         reset()
+    }
+
+    private fun moveRover() {
+        if (!checkPath()) {
+            cancelMovement = true
+            if (isBlocked) {
+                AlertDialog(context, content = context.getString(R.string.weirs_alert)).show()
+            } else if (!isBlocked) {
+                AlertDialog(context, content = context.getString(R.string.wall_alert)).show()
+            }
+            vibrate(context, 1000L)
+            return
+        }
+        when (direction) {
+            Direction.UP -> roverPosition.y += 1
+            Direction.RIGHT -> roverPosition.x += 1
+            Direction.LEFT -> roverPosition.x -= 1
+            Direction.DOWN -> roverPosition.y -= 1
+        }
+
+        vibrate(context, moveMil)
+        calculateRoverRect()
+        invalidate()
     }
 
     private fun turnRight() {
@@ -165,30 +173,6 @@ class RoverCustomView : View {
         vibrate(context, moveMil)
         invalidate()
     }
-
-    private fun moveOneCell() {
-        if (!checkPath()) {
-            cancelMovement = true
-            if (isBoulder) {
-                AlertDialog(context, content = context.getString(R.string.weirs_alert)).show()
-            } else if (!isBoulder) {
-                AlertDialog(context, content = context.getString(R.string.wall_alert)).show()
-            }
-            vibrate(context, 1000L)
-            return
-        }
-        vibrate(context, moveMil)
-        when (direction) {
-            Direction.UP -> roverPosition.y += 1
-            Direction.RIGHT -> roverPosition.x += 1
-            Direction.LEFT -> roverPosition.x -= 1
-            Direction.DOWN -> roverPosition.y -= 1
-        }
-
-        calculateRoverRect()
-        invalidate()
-    }
-
     private fun checkPath(): Boolean {
         val nextPos = Point(roverPosition)
         when (direction) {
@@ -197,17 +181,23 @@ class RoverCustomView : View {
             Direction.LEFT -> nextPos.x -= 1
             Direction.DOWN -> nextPos.y -= 1
         }
-        isBoulder = false
+        isBlocked = false
         return when {
             nextPos.y !in 0..19 -> false
             nextPos.x !in 0..9 -> false
             blockedCells[nextPos.y][nextPos.x] -> {
-                boulderPosition = nextPos
-                isBoulder = true
+                isBlocked = true
                 false
             }
             else -> true
         }
+    }
+
+    private fun getRoverBitmap() = when (direction) {
+        Direction.UP -> arrowUp
+        Direction.RIGHT -> arrowRight
+        Direction.LEFT -> arrowLeft
+        Direction.DOWN -> arrowDown
     }
 
     enum class Direction {

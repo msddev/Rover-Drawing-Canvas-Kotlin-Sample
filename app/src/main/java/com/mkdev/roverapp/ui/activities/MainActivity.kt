@@ -52,8 +52,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 }
 
                 rover?.let {
-                    roverCustomView.updateLayout(Point(it.startPoint.X, it.startPoint.Y), it.weirs)
-                    roverCustomView.processCommand(it.command)
+                    roverCustomView.runCommand(Point(it.startPoint.X, it.startPoint.Y), it.weirs, it.command)
                 } ?: run {
                     AlertDialog(this@MainActivity, content = getString(R.string.no_command_received)).show()
                 }
