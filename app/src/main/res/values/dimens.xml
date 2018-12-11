@@ -10,4 +10,5 @@
     <dimen name="text_size_Small">16sp</dimen>
     <dimen name="text_size_Normal">18sp</dimen>
 
+    <dimen name="dialog_radius">6dp</dimen>
 </resources>

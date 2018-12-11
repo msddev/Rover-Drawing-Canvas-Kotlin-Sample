@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">Rover App</string>
     <string name="get_commands">Get Commands</string>
+
+    <string name="error">An error occurred</string>
+    <string name="internet_error">Internet not available</string>
+    <string name="no_command_received">No command received</string>
+    <string name="please_wait">Please wait…</string>
+    <string name="welcome_to_my_mars">Welcome to my Mars</string>
+    <string name="click_the_button_to_get_directions_from_the_ground">Click \'Get Commands \' button \nto get Commands from the earth</string>
+
 </resources>

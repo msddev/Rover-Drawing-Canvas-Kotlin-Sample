@@ -1,4 +1,4 @@
-package com.mkdev.roverapp
+package com.mkdev.roverapp.utils
 
 import android.content.Context
 import android.content.res.Resources
@@ -6,9 +6,27 @@ import android.net.ConnectivityManager
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.support.v4.content.ContextCompat
-import android.widget.TextView
 import android.widget.Toast
+import io.reactivex.Completable
+import io.reactivex.Flowable
+import io.reactivex.FlowableTransformer
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+
+fun <T> schedulers(): FlowableTransformer<T, T> = FlowableTransformer {
+    it.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+}
+
+fun <T> Flowable<T>.iomain(): Flowable<T> = this.compose(schedulers())
+
+fun <T> Single<T>.iomain(): Single<T> = this.compose {
+    it.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+}
+
+fun Completable.iomain(): Completable = this.compose {
+    it.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+}
 
 fun isNetworkConnected(context: Context): Boolean {
     val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
@@ -27,17 +45,6 @@ fun showToast(context: Context, message: String) {
     Toast.makeText(context, message, Toast.LENGTH_LONG).show()
 }
 
-fun TextView.showMessage(message: String, type: MessageType) {
-    val color = when (type) {
-        MessageType.SUCCESS -> R.color.color_success
-        MessageType.ERROR -> R.color.color_error
-        MessageType.WARNING -> R.color.color_warning
-        MessageType.PROGRESS -> R.color.color_info
-    }
-    text = message
-    setTextColor(ContextCompat.getColor(context, color))
-}
-
 fun vibrate(context: Context) {
     val vib = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
@@ -46,9 +53,11 @@ fun vibrate(context: Context) {
         vib.vibrate(500)
 }
 
-enum class MessageType {
-    SUCCESS,
-    ERROR,
-    WARNING,
-    PROGRESS
+private var lastClick = 0L
+private val THRESHOLD = 2000
+fun doubleClickExit(): Boolean {
+    val now = System.currentTimeMillis()
+    val b = now - lastClick < THRESHOLD
+    lastClick = now
+    return b
 }

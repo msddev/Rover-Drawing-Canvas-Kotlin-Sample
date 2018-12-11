@@ -25,13 +25,19 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
 
-    implementation 'com.google.code.gson:gson:2.8.5'
+    // Retrofit http://square.github.io/retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
 
-
+    // RxJava https://github.com/ReactiveX/RxAndroid
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.3'
     implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'
+
+    // GSON body parser
+    implementation 'com.google.code.gson:gson:2.8.5'
+
+    // Logging for lazy people
+    implementation 'com.jakewharton.timber:timber:4.7.1'
 }

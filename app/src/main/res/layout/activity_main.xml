@@ -4,7 +4,38 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".ui.activities.MainActivity">
+
+    <LinearLayout
+        android:id="@+id/linWelcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/btnGetCommand"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            style="@style/MyTextStylePrimaryMicro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@string/welcome_to_my_mars"
+            android:textSize="22sp" />
+
+        <TextView
+            style="@style/MyTextStylePrimaryMicro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="@string/click_the_button_to_get_directions_from_the_ground"
+            android:textColor="@color/md_blue_grey_600"
+            android:textSize="@dimen/text_size_Micro" />
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/btnGetCommand"
@@ -16,6 +47,7 @@
         android:layout_marginBottom="8dp"
         android:background="@drawable/shape_rectangle_round_a"
         android:text="@string/get_commands"
+        android:textAllCaps="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
