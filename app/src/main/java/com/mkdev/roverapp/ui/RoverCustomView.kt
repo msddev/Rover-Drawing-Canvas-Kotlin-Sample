@@ -2,6 +2,7 @@ package com.mkdev.roverapp.ui
 
 import android.content.Context
 import android.graphics.*
+import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.view.View
 import com.mkdev.roverapp.R
@@ -21,12 +22,12 @@ class RoverCustomView : View {
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
 
-    private var roverUp: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_arrow_up)
-    private var roverRight: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_arrow_right)
-    private var roverLeft: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_arrow_left)
-    private var roverDown: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_arrow_down)
+    private var arrowUp: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_arrow_up)
+    private var arrowRight: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_arrow_right)
+    private var arrowLeft: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_arrow_left)
+    private var arrowDown: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_arrow_down)
 
-    private var cellWidth = dpToPx(24).toFloat()
+    private var cellWidth = 0f
     private val cellPadding = dpToPx(4).toFloat()
 
     private lateinit var roverRect: RectF
@@ -37,17 +38,18 @@ class RoverCustomView : View {
     private var partialCommand: String? = null
     private var cancelMovement = false
     private var roverThread: Thread? = null
+    private var blockedCells = Array(20) { BooleanArray(10) }
+    private var roverPosition = Point(0, 0)
+    private var moveMil = 100L
 
     private val blockedCellPaint = Paint().apply {
-        color = Color.RED
+        color = ContextCompat.getColor(context, R.color.secondaryColorGray)
     }
 
     private val cellPaint = Paint().apply {
-        color = Color.GREEN
+        color = ContextCompat.getColor(context, R.color.secondaryLightColorGreen)
     }
 
-    var blockedCells = Array(20) { BooleanArray(10) }
-    var roverPosition = Point(0, 0)
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
@@ -96,10 +98,10 @@ class RoverCustomView : View {
     }
 
     private fun getRoverBitmap() = when (direction) {
-        Direction.UP -> roverUp
-        Direction.RIGHT -> roverRight
-        Direction.LEFT -> roverLeft
-        Direction.DOWN -> roverDown
+        Direction.UP -> arrowUp
+        Direction.RIGHT -> arrowRight
+        Direction.LEFT -> arrowLeft
+        Direction.DOWN -> arrowDown
     }
 
     private fun calculateRoverRect() {
@@ -123,9 +125,6 @@ class RoverCustomView : View {
                         return@thread
                     }
 
-                    if (handler == null) {
-                        return@thread
-                    }
                     when (c) {
                         M_DIRECTION -> handler.post { moveOneCell() }
                         R_DIRECTION -> handler.post { turnRight() }
@@ -142,6 +141,7 @@ class RoverCustomView : View {
 
     fun stopProcess(){
         roverThread?.interrupt()
+        reset()
     }
 
     private fun turnRight() {
@@ -150,8 +150,8 @@ class RoverCustomView : View {
             Direction.RIGHT -> Direction.DOWN
             Direction.DOWN -> Direction.LEFT
             Direction.LEFT -> Direction.UP
-            else -> Direction.UP
         }
+        vibrate(context, moveMil)
         invalidate()
     }
 
@@ -161,8 +161,8 @@ class RoverCustomView : View {
             Direction.LEFT -> Direction.DOWN
             Direction.DOWN -> Direction.RIGHT
             Direction.RIGHT -> Direction.UP
-            else -> Direction.UP
         }
+        vibrate(context, moveMil)
         invalidate()
     }
 
@@ -170,20 +170,19 @@ class RoverCustomView : View {
         if (!checkPath()) {
             cancelMovement = true
             if (isBoulder) {
-                AlertDialog(mContext = context, content = context.getString(R.string.weirs_alert)).show()
+                AlertDialog(context, content = context.getString(R.string.weirs_alert)).show()
             } else if (!isBoulder) {
-                AlertDialog(mContext = context, content = context.getString(R.string.wall_alert)).show()
+                AlertDialog(context, content = context.getString(R.string.wall_alert)).show()
             }
             vibrate(context, 1000L)
             return
         }
-        vibrate(context, 100L)
+        vibrate(context, moveMil)
         when (direction) {
             Direction.UP -> roverPosition.y += 1
             Direction.RIGHT -> roverPosition.x += 1
             Direction.LEFT -> roverPosition.x -= 1
             Direction.DOWN -> roverPosition.y -= 1
-            else -> throw RuntimeException("Invalid direction")
         }
 
         calculateRoverRect()
@@ -197,7 +196,6 @@ class RoverCustomView : View {
             Direction.RIGHT -> nextPos.x += 1
             Direction.LEFT -> nextPos.x -= 1
             Direction.DOWN -> nextPos.y -= 1
-            else -> throw RuntimeException("Invalid direction")
         }
         isBoulder = false
         return when {

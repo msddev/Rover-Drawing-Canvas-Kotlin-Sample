@@ -7,8 +7,8 @@ import android.view.View
 import com.mkdev.roverapp.R
 import com.mkdev.roverapp.api.Api
 import com.mkdev.roverapp.api.Controller
+import com.mkdev.roverapp.ui.dialogs.AlertDialog
 import com.mkdev.roverapp.ui.dialogs.LoadingDialog
-import com.mkdev.roverapp.utils.CustomToast
 import com.mkdev.roverapp.utils.iomain
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
@@ -31,8 +31,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v) {
             btnGetCommand -> {
-                roverCustomView.stopProcess()
-                roverCustomView.reset()
                 getRoverCommands()
             }
         }
@@ -42,7 +40,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         val service = Controller.getClient(applicationContext).create(Api::class.java)
         disposable = service.getRoverCommand("12856492")
             .iomain()
-            .doOnSubscribe { loadingDialog.show() }
+            .doOnSubscribe {
+                loadingDialog.show()
+                roverCustomView.stopProcess()
+            }
             .doAfterTerminate { loadingDialog.hide() }
             .subscribe({ rover ->
                 if (linWelcome.visibility == View.VISIBLE) {
@@ -51,20 +52,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 }
 
                 rover?.let {
-                    roverCustomView.reset()
                     roverCustomView.updateLayout(Point(it.startPoint.X, it.startPoint.Y), it.weirs)
                     roverCustomView.processCommand(it.command)
                 } ?: run {
-                    CustomToast.makeText(
-                        this@MainActivity,
-                        getString(R.string.no_command_received),
-                        CustomToast.WARNING
-                    )
+                    AlertDialog(this@MainActivity, content = getString(R.string.no_command_received)).show()
                 }
 
             }, {
                 Timber.d(it)
-                CustomToast.makeText(this@MainActivity, getString(R.string.error), CustomToast.ERROR)
+                AlertDialog(this@MainActivity, content = getString(R.string.error)).show()
             })
     }
 
