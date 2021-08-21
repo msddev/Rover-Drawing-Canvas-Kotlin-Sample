@@ -2,9 +2,7 @@
 This is an example Android app that shows you how to use my custom Drawing View control. 
 
 ## Screenshots
-<img src="screenshot/Screenshot_1544560304.png" width="300">
-<img src="screenshot/Screenshot_1544560343.png" width="300">
-<img src="screenshot/Screenshot_1544560364.png" width="300">
+<img src="screenshot/Screenshot_1544560304.png" width="300"><img src="screenshot/Screenshot_1544560343.png" width="300"><img src="screenshot/Screenshot_1544560364.png" width="300">
 
 
 ## Libraries used
